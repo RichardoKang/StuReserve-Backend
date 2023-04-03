@@ -7,6 +7,8 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { ClassroomsModule } from './classrooms/classrooms.module';
 import { Classrooms } from './classrooms/entities/classroom.entity';
+import { OrderModule } from './order/order.module';
+import { Order } from './order/entities/order.entity';
 import envConfig from '../config/env';
 
 @Module({
@@ -17,7 +19,7 @@ import envConfig from '../config/env';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
-        entities: [Classrooms], // 数据表实体
+        entities: [], // 数据表实体
         host: configService.get('DB_HOST', 'localhost'), // 主机，默认为localhost
         port: configService.get<number>('DB_PORT', 6543), // 端口，默认为5432
         username: configService.get('DB_USER', 'mysql'), // 用户名，默认为postgres
@@ -32,7 +34,8 @@ import envConfig from '../config/env';
 
     AuthModule,
     UserModule,
-    ClassroomsModule
+    ClassroomsModule,
+    OrderModule
   ],
 
   controllers: [AppController],
