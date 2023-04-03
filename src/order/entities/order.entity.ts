@@ -1,7 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity()
+@Entity('order')
 export class Order {
+    @ApiProperty({ description: '预约订单id' })
     @PrimaryGeneratedColumn()
     id: number;
 
