@@ -20,11 +20,11 @@ import envConfig from '../config/env';
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
         entities: [], // 数据表实体
-        host: configService.get('DB_HOST', 'localhost'), // 主机，默认为localhost
-        port: configService.get<number>('DB_PORT', 6543), // 端口，默认为5432
-        username: configService.get('DB_USER', 'mysql'), // 用户名，默认为postgres
+        host: configService.get('DB_HOST', '43.142.110.130'), // 主机
+        port: configService.get<number>('DB_PORT', 3306), // 端口
+        username: configService.get('DB_USER', 'mysql'), // 用户名
         password: configService.get('DB_PASSWORD', '200277'), // 密码
-        database: configService.get('DB_DATABASE', 'stu_reserve'), // 数据库名
+        database: configService.get('DB_DATABASE', 'tx_stu_reserve'), // 数据库名
         // charset: 'utf8mb4',
         timezone: '+08:00',
         synchronize: true,

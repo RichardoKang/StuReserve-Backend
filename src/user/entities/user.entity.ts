@@ -27,7 +27,7 @@ export class User {
     password: string;
 
     @Column({ default: null })
-    avatar: string;
+    avatar: string; // avatar: 储存头像的url
 
     @Column({ default: null })
     openid: string;

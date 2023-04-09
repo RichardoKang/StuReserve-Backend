@@ -1,18 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
+  Controller,
+  Delete,
+  Get,
   Param,
-  Delete
+  Post,
+  Put,
+  Query,
+  Patch,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto,OrderRo,OrderInfoDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { UseGuards } from '@nestjs/common';
 import { Roles } from 'src/auth/role.guard';
 
 @ApiTags('预约订单')
@@ -30,9 +33,13 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: '获取所有预约订单' })
-  @Get()
-  findAll() {
-    return this.orderService.findAll();
+  @Get('/list')
+  async findAll(
+    @Query() query,
+    @Query('pageSize') pageSize: number,
+    @Query('pageNum') pageNum: number,
+  ): Promise<OrderRo> {
+    return await this.orderService.findAll(query);
   }
 
 

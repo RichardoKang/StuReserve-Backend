@@ -1,20 +1,28 @@
-import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { OrderInfoDto } from "../dto/create-order.dto";
+import { User } from "../../user/entities/user.entity";
+import { Classrooms } from "../../classrooms/entities/classroom.entity";
+
 
 @Entity('order')
 export class Order {
-    @ApiProperty({ description: '预约订单id' })
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    classroomId: number;
+    @ManyToOne((type) => Classrooms,(classroom) => classroom.name)
+    studyroom: Classrooms;
 
-    @Column()
-    userId: number;
-
-    @Column()
-    date: Date;
+    // 预定人
+    @ManyToOne((type) => User, (user) => user.openid)
+    subscriber: User;
 
     @Column({
         name: 'startTime',
@@ -26,9 +34,16 @@ export class Order {
     @Column({
         name: 'endTime',
         type: 'timestamp',
-        default: () => 'CURRENT_TIMESTAMP'+1,
+        default: () => 'TIMESTAMPADD(HOUR,1,CURRENT_TIMESTAMP)',
     })
     endTime: Date;
+
+    @Column({
+        type: 'timestamp',
+        name: 'create_time',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    createTime: Date;
 
     @Column()
     isApproved: boolean;
@@ -39,4 +54,23 @@ export class Order {
     @Column()
     isFinished: boolean;
 
+    toResponseObject(): OrderInfoDto {
+        const responseObj: OrderInfoDto = {
+            id: this.id,
+            //studyroom: this.studyroom.name,
+            //date: this.date,
+            //subscriber: this.subscriber.nickname,
+            //userID:this.subscriber.openid,
+            startTime: this.startTime,
+            creatTime: this.createTime,
+            endTime: this.endTime,
+            isApproved: this.isApproved,
+            isCanceled: this.isCanceled
+        };
+        if (this.subscriber && this.subscriber.id) {
+            //responseObj.userID = this.subscriber.id;
+            //responseObj.subscriber = this.subscriber.nickname || this.subscriber.username;
+        }
+        return responseObj;
+    }
 }
