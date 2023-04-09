@@ -57,10 +57,10 @@ export class Order {
     toResponseObject(): OrderInfoDto {
         const responseObj: OrderInfoDto = {
             id: this.id,
-            //studyroom: this.studyroom.name,
+            studyroom: this.studyroom.name,
             //date: this.date,
-            //subscriber: this.subscriber.nickname,
-            //userID:this.subscriber.openid,
+            subscriber: this.subscriber.nickname,
+            userID:this.subscriber.openid,
             startTime: this.startTime,
             creatTime: this.createTime,
             endTime: this.endTime,

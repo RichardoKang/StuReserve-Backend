@@ -22,10 +22,10 @@ export class OrderService {
   async findAll(query):Promise<OrderRo>{
     const qb = await this.ordersRepository
       .createQueryBuilder('order')
-      .select(['order.id'])
-      .orderBy('order.createTime', 'DESC')
+      .leftJoinAndSelect('order.studyroom','classroom')
+      .leftJoinAndSelect('order.subscriber','user')
     qb.where('1 = 1');
-    qb.orderBy('order.createTime', 'DESC');
+    qb.orderBy('order.id', 'DESC');
 
     const count = await qb.getCount();
     const { pageNum = 1, pageSize = 10, ...params } = query; // 分页参数 pageNum 页码 pageSize 每页条数

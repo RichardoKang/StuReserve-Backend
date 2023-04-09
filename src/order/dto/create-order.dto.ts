@@ -22,10 +22,10 @@ export class CreateOrderDto {
 
 export class OrderInfoDto {
   public id: number;
-  //public classroom: string;
+  public studyroom: string;
   //public date: Date;
-  //public subscriber: String;
-  //public userID: string;
+  public subscriber: String;
+  public userID: string;
   public startTime: Date;
   public endTime: Date;
   public creatTime: Date;
