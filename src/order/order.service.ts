@@ -38,6 +38,39 @@ export class OrderService {
     return { list: result, count: count };
   }
 
+  async getMine(currentUser, queryMy): Promise<OrderRo> {
+    const qb = await this.ordersRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.studyroom','classroom')
+      .leftJoinAndSelect('order.subscriber','user')
+    qb.where('user.id=:id', { id: currentUser.id });
+    qb.orderBy('order.id', 'DESC');
+
+    const count = await qb.getCount();
+    const { pageNum = 1, pageSize = 10, ...params } = queryMy;
+    qb.limit(pageSize);
+    qb.offset(pageSize * (pageNum - 1));
+
+    const orders = await qb.getMany();
+    const result: OrderInfoDto[] = orders.map((item) => item.toResponseObject());
+
+    return { list: result, count: count };
+  }
+
+  async getCountNumberInTimeSpanAtStudyroom(
+    studyroomID: number, startTime: Date, endTime: Date):Promise<number> {
+    const qb = await this.ordersRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.studyroom','classroom')
+    qb.where('classroom.id=:id', { id: studyroomID });
+    qb.andWhere('order.startTime >= :startTime', { startTime: startTime });
+    qb.andWhere('order.endTime <= :endTime', { endTime: endTime });
+
+    const count = await qb.getCount();
+
+    return count;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} order`;
   }

@@ -62,14 +62,14 @@ export class Order {
             subscriber: this.subscriber.nickname,
             userID:this.subscriber.openid,
             startTime: this.startTime,
-            creatTime: this.createTime,
             endTime: this.endTime,
+            creatTime: this.createTime,
             isApproved: this.isApproved,
             isCanceled: this.isCanceled
         };
         if (this.subscriber && this.subscriber.id) {
-            //responseObj.userID = this.subscriber.id;
-            //responseObj.subscriber = this.subscriber.nickname || this.subscriber.username;
+            responseObj.userID = this.subscriber.id;
+            responseObj.subscriber = this.subscriber.nickname || this.subscriber.username;
         }
         return responseObj;
     }
