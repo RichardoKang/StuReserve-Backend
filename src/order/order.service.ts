@@ -66,18 +66,16 @@ export class OrderService {
     qb.andWhere('order.startTime >= :startTime', { startTime: startTime });
     qb.andWhere('order.endTime <= :endTime', { endTime: endTime });
 
-    const count = await qb.getCount();
-
-    return count;
+    return await qb.getCount();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} order`;
+  // }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
+  // update(id: number, updateOrderDto: UpdateOrderDto) {
+  //   return `This action updates a #${id} order`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} order`;

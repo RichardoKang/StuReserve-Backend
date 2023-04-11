@@ -11,9 +11,17 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags
+} from '@nestjs/swagger';
 import { OrderService } from './order.service';
-import { CreateOrderDto,OrderRo,OrderInfoDto } from './dto/create-order.dto';
+import {
+  CreateOrderDto,
+  OrderRo,
+  OrderInfoDto
+} from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/role.guard';
@@ -49,7 +57,7 @@ export class OrderController {
   /*
    * 获取自己的所有预约
    */
-  @ApiOperation({ summary: '获取自己的预约' })
+  @ApiOperation({ summary: '获取自己的预约订单' })
   @ApiBearerAuth()
   @Get('/mine')
   @UseGuards(AuthGuard('jwt'))
@@ -62,10 +70,10 @@ export class OrderController {
     return await this.orderService.getMine(req.user, queryMy);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.orderService.findOne(+id);
+  // }
 
   /*
    * 获得特定教室在特定时间段内的预约人数
@@ -84,12 +92,12 @@ export class OrderController {
     );
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
-  }
-
-  @Delete(':id')
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  //   return this.orderService.update(+id, updateOrderDto);
+  // }
+  @ApiOperation({ summary: '删除订单' })
+  @Delete('/delete/:id')
   remove(@Param('id') id: string) {
     return this.orderService.remove(+id);
   }

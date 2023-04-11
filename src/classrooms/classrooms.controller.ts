@@ -18,23 +18,24 @@ export class ClassroomsController {
     return this.classroomsService.create(createClassroomDto);
   }
 
+  /*
+   * 获取所有自习室
+   */
   @ApiOperation({ summary: '获取所有自习室' })
-  @Get()
+  @Get('/list')
   async findAll(@Query() query) {
     return await this.classroomsService.findAll();
   }
 
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.classroomsService.findOne(+id);
-  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateClassroomDto: UpdateClassroomDto) {
     return this.classroomsService.update(+id, updateClassroomDto);
   }
 
+  /*
+   * 删除某个自习室
+   */
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.classroomsService.remove(+id);
