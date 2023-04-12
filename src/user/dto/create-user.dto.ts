@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty,ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
@@ -10,6 +10,9 @@ export class CreateUserDto {
   @IsNotEmpty({ message: '请输入密码' })
   password: string;
 
-  @ApiProperty({ description: '用户角色' })
+  @ApiProperty({
+    required: false,
+    description: '[用户角色]: 0-admin | 1-common | 2-visitor',
+  })
   role: string;
 }

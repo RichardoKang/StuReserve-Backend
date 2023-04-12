@@ -20,6 +20,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiPropertyOptional
 } from '@nestjs/swagger';
 import { UserInfoDto } from './dto/user-info.dto';
 import { AuthGuard } from '@nestjs/passport';

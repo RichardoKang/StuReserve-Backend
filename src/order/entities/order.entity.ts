@@ -52,11 +52,11 @@ export class Order {
     isCanceled: boolean;
 
     @Column()
-    isFinished: boolean;
+    isVerified: boolean;
 
     toResponseObject(): OrderInfoDto {
         const responseObj: OrderInfoDto = {
-            id: this.id,
+            orderId: this.id,
             studyroom: this.studyroom.name,
             //date: this.date,
             subscriber: this.subscriber.nickname,

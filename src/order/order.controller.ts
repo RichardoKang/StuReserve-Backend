@@ -30,12 +30,13 @@ import { query } from "express";
 @ApiTags('预约订单')
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) {
+  }
 
   @ApiOperation({ summary: '创建预约订单' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @Roles('common', 'root')
+  @Roles('admin', 'root')
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.create(createOrderDto);
@@ -59,14 +60,14 @@ export class OrderController {
    */
   @ApiOperation({ summary: '获取自己的预约订单' })
   @ApiBearerAuth()
-  @Get('/mine')
+  @Get('/mine/create')
   @UseGuards(AuthGuard('jwt'))
   async getMine(
     @Query() queryMy,
     @Req() req,
     @Query('pageSize') pageSize: number,
     @Query('pageNum') pageNum: number,
-  ):Promise<OrderRo> {
+  ): Promise<OrderRo> {
     return await this.orderService.getMine(req.user, queryMy);
   }
 
@@ -96,9 +97,46 @@ export class OrderController {
   // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
   //   return this.orderService.update(+id, updateOrderDto);
   // }
-  @ApiOperation({ summary: '删除订单' })
-  @Delete('/delete/:id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+  @ApiOperation({ summary: '取消自己的预约订单' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Put('/mine/cancel')
+  async cancelMine(
+    @Req() req,
+    @Query('id') orderId: number,
+  ):Promise<string> {
+    return await this.orderService.cancelMine(
+      req.user,
+      orderId,
+    );
   }
+
+  @ApiOperation({ summary: '审核预约订单' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
+  @Put('/manage/verify')
+  async verifyOrder(
+    @Req() curentUser,
+    @Query('id') orderId: number,
+  ):Promise<string> {
+    return await this.orderService.verifyOrder(
+      curentUser,
+      orderId,
+    );
+  }
+
+  @ApiOperation({ summary: '查询未审核预约订单' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
+  @Get('/manage/list')
+  async findUnverifiedOrders(
+      @Query() query,
+      @Query('pageSize') pageSize: number,
+      @Query('pageNum') pageNum: number,
+  ): Promise<OrderRo> {
+      return await this.orderService.findUnverifiedOrders();
+  }
+
 }

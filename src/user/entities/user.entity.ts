@@ -32,7 +32,7 @@ export class User {
     @Column({ default: null })
     openid: string;
 
-    @Column('enum', { enum: ['root', 'common', 'visitor'], default: 'visitor' })
+    @Column('enum', { enum: ['admin','common', 'visitor'], default: 'visitor' })
     role: string;
 
     // @OneToMany(() => Classrooms,)

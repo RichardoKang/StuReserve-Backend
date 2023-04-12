@@ -3,7 +3,7 @@ import { CreateOrderDto, OrderRo,OrderInfoDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 
 
 
@@ -77,7 +77,53 @@ export class OrderService {
   //   return `This action updates a #${id} order`;
   // }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async cancelMine(currentUser, orderId: number) : Promise<string>{
+    const qb = await this.ordersRepository
+        .createQueryBuilder('order')
+        .update('order')
+        .set({ isCanceled: true })
+    qb.where('order.subscriberId=:userId', { userId: currentUser.id })
+    qb.andWhere('order.id=:id', { id: orderId })
+    qb.andWhere('order.isCanceled=:isCanceled', { isCanceled: false })
+
+    const result = await qb.execute();
+    if (result.affected == 0) {
+        throw new HttpException('取消失败或存在重复取消行为', HttpStatus.BAD_REQUEST);
+    }
+    else {
+        return '取消预约成功';
+    }
+  }
+
+  async verifyOrder(currentUser, orderId: number) : Promise<string>{
+    const qb = await this.ordersRepository
+        .createQueryBuilder('order')
+        .update('order')
+        .set({ isApproved: true ,isVerified: true })
+    qb.where('order.id=:id', { id: orderId })
+    qb.andWhere('order.isApproved=:isApproved', { isApproved: false })
+
+    const result = await qb.execute();
+    if (result.affected == 0) {
+        throw new HttpException('设定失败或存在重复审核行为', HttpStatus.BAD_REQUEST);
+    }
+    else {
+        return '已允许此项预约';
+    }
+  }
+
+  async findUnverifiedOrders() : Promise<OrderRo>{
+    const qb = await this.ordersRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.studyroom','classroom')
+      .leftJoinAndSelect('order.subscriber','user')
+    qb.where('order.isVerified=:isVerified', { isVerified: false });
+    qb.orderBy('order.id', 'DESC');
+
+    const count = await qb.getCount();
+    const orders = await qb.getMany();
+    const result: OrderInfoDto[] = orders.map((item) => item.toResponseObject());
+
+    return { list: result, count: count };
   }
 }

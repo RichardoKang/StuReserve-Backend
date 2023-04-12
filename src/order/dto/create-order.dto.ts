@@ -17,7 +17,7 @@ export class CreateOrderDto {
 }
 
 export class OrderInfoDto {
-  public id: number;
+  public orderId: number;
   public studyroom: string;
   //public date: Date;
   public subscriber: String;
