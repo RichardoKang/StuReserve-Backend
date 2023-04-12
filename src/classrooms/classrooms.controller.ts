@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post,Put, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ClassroomsService } from './classrooms.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
@@ -12,15 +12,16 @@ import { Roles } from 'src/auth/role.guard';
 export class ClassroomsController {
   constructor(private readonly classroomsService: ClassroomsService) {}
 
-
-  @Post()
+  @ApiOperation({ summary: '创建自习室' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
+  @Post('/create')
   create(@Body() createClassroomDto: CreateClassroomDto) {
     return this.classroomsService.create(createClassroomDto);
   }
 
-  /*
-   * 获取所有自习室
-   */
+
   @ApiOperation({ summary: '获取所有自习室' })
   @Get('/list')
   async findAll(@Query() query) {
@@ -28,16 +29,18 @@ export class ClassroomsController {
   }
 
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClassroomDto: UpdateClassroomDto) {
-    return this.classroomsService.update(+id, updateClassroomDto);
+  @ApiOperation({ summary: '更新自习室信息' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() updateClassroomDto: UpdateClassroomDto) {
+    return this.classroomsService.updateRoom(+id, updateClassroomDto);
   }
 
-  /*
-   * 删除某个自习室
-   */
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.classroomsService.remove(+id);
-  }
+  // @ApiOperation({ summary: '删除自习室' })
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.classroomsService.remove(+id);
+  // }
 }

@@ -12,8 +12,19 @@ export class ClassroomsService {
     private readonly classroomsRepository: Repository<Classrooms>,
   ) {}
 
-  create(createClassroomDto: CreateClassroomDto) {
-    return 'This action adds a new classroom';
+  async create(createClassroomDto: CreateClassroomDto) {
+    const { name, capacity } = createClassroomDto;
+    const classroom = await this.classroomsRepository.findOne({
+      where: { name },
+    });
+    if (classroom) {
+      throw new HttpException('教室已存在', HttpStatus.BAD_REQUEST);
+    }
+    const newClassroom = await this.classroomsRepository.create({
+      name,
+      capacity,
+    });
+    return await this.classroomsRepository.save(newClassroom);
   }
 
   async findAll() {
@@ -28,8 +39,8 @@ export class ClassroomsService {
     return `This action returns a #${id} classroom`;
   }
 
-  update(id: number, updateClassroomDto: UpdateClassroomDto) {
-    return `This action updates a #${id} classroom`;
+  async updateRoom(id: number, updateClassroomDto: UpdateClassroomDto) {
+    return await this.classroomsRepository.update(id, updateClassroomDto);
   }
 
   remove(id: number) {

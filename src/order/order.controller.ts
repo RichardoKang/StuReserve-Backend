@@ -33,7 +33,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {
   }
 
-  @ApiOperation({ summary: '创建预约订单' })
+  @ApiOperation({ summary: '创建预约订单（重写）' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Roles('admin', 'root')
