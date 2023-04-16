@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiOperation,
+  ApiOperation, ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
 import { OrderService } from './order.service';
@@ -33,13 +33,16 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {
   }
 
-  @ApiOperation({ summary: '创建预约订单（重写）' })
+  @ApiOperation({ summary: '创建预约订单' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Roles('admin', 'root')
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  @Post('/create')
+  async create(
+    @Req() req,
+    @Body() createOrderDto: CreateOrderDto
+  ):Promise<number> {
+    return this.orderService.create(req.user,createOrderDto);
   }
 
   /*

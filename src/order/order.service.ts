@@ -3,7 +3,7 @@ import { CreateOrderDto, OrderRo,OrderInfoDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 
 
 
@@ -15,9 +15,37 @@ export class OrderService {
   ) {}
 
 
-  async create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+  async create(currentUser, Order: CreateOrderDto) :Promise<number> {
+    const { studyroomId, startTime, endTime } = Order;
+    const foreorder = await this.ordersRepository.findOne({
+      join: {
+        alias: 'order',
+        leftJoinAndSelect: {
+          studyroom: 'order.studyroom',
+          subscriber: 'order.subscriber',
+        }
+      },
+      where: { subscriber: currentUser, startTime: startTime }
+    });
+    if (foreorder) {
+      throw new HttpException('存在重复预约', HttpStatus.BAD_REQUEST);
+    }
+
+    const classroomCapacity = await this.getCountNumberInTimeSpanAtStudyroom(studyroomId, startTime, endTime);
+    if (classroomCapacity >= 30) {
+      throw new HttpException('教室已满', HttpStatus.BAD_REQUEST);
+    }
+
+    const orderParams = {
+      ...Order,
+      subscriber: currentUser,
+    };
+
+    const newOrder: Order = await this.ordersRepository.create(orderParams);
+    const result = await this.ordersRepository.save(newOrder);
+    return result.id;
   }
+
 
   async findAll(query):Promise<OrderRo>{
     const qb = await this.ordersRepository
@@ -36,6 +64,10 @@ export class OrderService {
     const result: OrderInfoDto[] = orders.map((item) => item.toResponseObject());
 
     return { list: result, count: count };
+  }
+
+  async findOne(id: number) {
+    return `This action returns a #${id} order`;
   }
 
   async getMine(currentUser, queryMy): Promise<OrderRo> {

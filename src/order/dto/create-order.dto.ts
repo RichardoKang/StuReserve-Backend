@@ -5,7 +5,7 @@ import { Timestamp } from "typeorm";
 export class CreateOrderDto {
   @ApiProperty({ description: '教室ID' })
   @IsNotEmpty({ message: '教室ID必填' })
-  classroomID: number;
+  studyroomId: number;
 
   @ApiProperty({description:'起始时间'})
   @IsNotEmpty({message: '请选择起始时间'})

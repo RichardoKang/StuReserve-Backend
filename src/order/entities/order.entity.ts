@@ -45,13 +45,19 @@ export class Order {
     })
     createTime: Date;
 
-    @Column()
+    @Column({
+        default: false,
+    })
     isApproved: boolean;
 
-    @Column()
+    @Column({
+        default: false,
+    })
     isCanceled: boolean;
 
-    @Column()
+    @Column({
+        default: false,
+    })
     isVerified: boolean;
 
     toResponseObject(): OrderInfoDto {
