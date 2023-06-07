@@ -90,7 +90,7 @@ export class OrderService {
   }
 
   async getCountNumberInTimeSpanAtStudyroom(
-    studyroomID: number, startTime: Date, endTime: Date):Promise<number> {
+    studyroomID: string, startTime: Date, endTime: Date):Promise<number> {
     const qb = await this.ordersRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.studyroom','classroom')
@@ -111,40 +111,40 @@ export class OrderService {
 
   async cancelMine(currentUser, orderId: number) : Promise<string>{
     const qb = await this.ordersRepository
-        .createQueryBuilder('order')
-        .update('order')
-        .set({ isCanceled: true })
+      .createQueryBuilder('order')
+      .update('order')
+      .set({ isCanceled: true })
     qb.where('order.subscriberId=:userId', { userId: currentUser.id })
     qb.andWhere('order.id=:id', { id: orderId })
     qb.andWhere('order.isCanceled=:isCanceled', { isCanceled: false })
 
     const result = await qb.execute();
     if (result.affected == 0) {
-        throw new HttpException('取消失败或存在重复取消行为', HttpStatus.BAD_REQUEST);
+      throw new HttpException('取消失败或存在重复取消行为', HttpStatus.BAD_REQUEST);
     }
     else {
-        return '取消预约成功';
+      return '取消预约成功';
     }
   }
 
   async verifyOrder(currentUser, orderId: number) : Promise<string>{
     const qb = await this.ordersRepository
-        .createQueryBuilder('order')
-        .update('order')
-        .set({ isApproved: true ,isVerified: true })
+      .createQueryBuilder('order')
+      .update('order')
+      .set({ isApproved: true ,isVerified: true })
     qb.where('order.id=:id', { id: orderId })
     qb.andWhere('order.isApproved=:isApproved', { isApproved: false })
 
     const result = await qb.execute();
     if (result.affected == 0) {
-        throw new HttpException('设定失败或存在重复审核行为', HttpStatus.BAD_REQUEST);
+      throw new HttpException('设定失败或存在重复审核行为', HttpStatus.BAD_REQUEST);
     }
     else {
-        return '已允许此项预约';
+      return '已允许此项预约';
     }
   }
 
-  async findUnverifiedOrders() : Promise<OrderRo>{
+  async findUnverifiedOrders(query) : Promise<OrderRo>{
     const qb = await this.ordersRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.studyroom','classroom')
@@ -153,6 +153,10 @@ export class OrderService {
     qb.orderBy('order.id', 'DESC');
 
     const count = await qb.getCount();
+    const { pageNum = 1, pageSize = 10, ...params } = query; // 分页参数 pageNum 页码 pageSize 每页条数
+    qb.limit(pageSize);
+    qb.offset(pageSize * (pageNum - 1));
+
     const orders = await qb.getMany();
     const result: OrderInfoDto[] = orders.map((item) => item.toResponseObject());
 

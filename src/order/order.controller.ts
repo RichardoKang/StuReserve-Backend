@@ -45,9 +45,6 @@ export class OrderController {
     return this.orderService.create(req.user,createOrderDto);
   }
 
-  /*
-   * 获取所有预约订单
-   */
   @ApiOperation({ summary: '获取所有预约订单' })
   @Get('/list')
   async findAll(
@@ -58,9 +55,6 @@ export class OrderController {
     return await this.orderService.findAll(query);
   }
 
-  /*
-   * 获取自己的所有预约
-   */
   @ApiOperation({ summary: '获取自己的预约订单' })
   @ApiBearerAuth()
   @Get('/mine/create')
@@ -79,13 +73,10 @@ export class OrderController {
   //   return this.orderService.findOne(+id);
   // }
 
-  /*
-   * 获得特定教室在特定时间段内的预约人数
-   */
   @ApiOperation({ summary: '获得特定教室在特定时间段内的预约人数' })
   @Get('/classroom/count')
   async getCountNumberInTimeSpanAtStudyroom(
-    @Query('studyroomId') studyroomId: number,
+    @Query('studyroomId') studyroomId: string,
     @Query('startTime') startTime: Date,
     @Query('endTime') endTime: Date,
   ): Promise<number> {
@@ -95,7 +86,6 @@ export class OrderController {
       endTime,
     );
   }
-
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
   //   return this.orderService.update(+id, updateOrderDto);
@@ -139,7 +129,7 @@ export class OrderController {
       @Query('pageSize') pageSize: number,
       @Query('pageNum') pageNum: number,
   ): Promise<OrderRo> {
-      return await this.orderService.findUnverifiedOrders();
+      return await this.orderService.findUnverifiedOrders(query);
   }
 
 }

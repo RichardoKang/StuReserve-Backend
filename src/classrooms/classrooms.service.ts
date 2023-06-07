@@ -29,9 +29,9 @@ export class ClassroomsService {
 
   async findAll() {
     const qb = await this.classroomsRepository
-        .createQueryBuilder('classroom')
-        .select(['classroom.id', 'classroom.name', 'classroom.capacity'])
-        .getMany();
+      .createQueryBuilder('classroom')
+      .select(['classroom.id', 'classroom.name', 'classroom.capacity','classroom.isAvailable'])
+      .getMany();
     return qb;
   }
 

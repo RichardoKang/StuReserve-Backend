@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Classrooms {
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
 
     @Column()
     name: string;
@@ -11,7 +11,7 @@ export class Classrooms {
     @Column()
     capacity: number;
 
-    @Column()
+    @Column({default: true})
     isAvailable: boolean;
 
 
