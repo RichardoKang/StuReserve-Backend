@@ -17,7 +17,14 @@ export class Order {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne((type) => Classrooms,(classroom) => classroom.name)
+    @Column({
+        name: 'studyroomId',
+        type: 'int',
+    })
+    studyroomId: number;
+
+    @ManyToOne((type) => Classrooms,(classroom) => classroom.id)
+    @JoinColumn({ name: 'studyroomId' })
     studyroom: Classrooms;
 
     // 预定人
@@ -63,7 +70,7 @@ export class Order {
     toResponseObject(): OrderInfoDto {
         const responseObj: OrderInfoDto = {
             orderId: this.id,
-            studyroom: this.studyroom.name,
+            studyroomId: this.studyroomId,
             //date: this.date,
             subscriber: this.subscriber.nickname,
             userID:this.subscriber.openid,

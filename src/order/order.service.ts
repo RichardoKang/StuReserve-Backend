@@ -21,7 +21,7 @@ export class OrderService {
       join: {
         alias: 'order',
         leftJoinAndSelect: {
-          studyroom: 'order.studyroom',
+          studyroomId: 'order.studyroom',
           subscriber: 'order.subscriber',
         }
       },
@@ -31,7 +31,7 @@ export class OrderService {
       throw new HttpException('存在重复预约', HttpStatus.BAD_REQUEST);
     }
 
-    const classroomCapacity = await this.getCountNumberInTimeSpanAtStudyroom(studyroomId, startTime, endTime);
+    const classroomCapacity = await this.getCountNumberInTimeSpanAtStudyroom(String(studyroomId), startTime, endTime);
     if (classroomCapacity >= 30) {
       throw new HttpException('教室已满', HttpStatus.BAD_REQUEST);
     }
